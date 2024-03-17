@@ -1,0 +1,17 @@
+﻿services:
+  web_api:
+    image: 2fa
+    container_name: 2FA_Application
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sql
+
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    container_name: sql
+    ports: 
+      - "1433:1433" 
+    environment:
+      - ACCEPT_EULA=y
+      - SA_PASSWORD=DbPass!@#4%^&

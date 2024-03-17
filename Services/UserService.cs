@@ -11,12 +11,12 @@ namespace _2FA.Services
 		public static IResult Register(string mobile, string password)
 		{
 			if (string.IsNullOrEmpty(mobile) || string.IsNullOrEmpty(password))
-				return Results.Problem("Both Mobile Number and Password Mandatory");
+				return Results.Problem("Both Mobile Number and Password Mandatory", null, StatusCodes.Status406NotAcceptable);
 
 			using (DatabaseContext _dbContext = new())
 			{
 				if (_dbContext.Users.Any(u => u.Mobile == mobile))
-					return Results.Problem("Mobile Number already registered");
+					return Results.Problem("Mobile Number already registered", null, StatusCodes.Status406NotAcceptable);
 
 				User user = new()
 				{
@@ -25,19 +25,19 @@ namespace _2FA.Services
 				};
 				_dbContext.Users.Add(user);
 				_dbContext.SaveChanges();
-				return Results.Ok();
+				return Results.StatusCode(StatusCodes.Status201Created);
 			}
 		}
 		public static IResult Login(string mobile, string password)
 		{
 			if (string.IsNullOrEmpty(mobile) || string.IsNullOrEmpty(password))
-				return Results.Problem("Both Mobile Number and Password Mandatory");
+				return Results.Problem("Both Mobile Number and Password Mandatory", null, StatusCodes.Status406NotAcceptable);
 
 			using (DatabaseContext _dbContext = new())
 			{
 				User loginUser = _dbContext.Users.FirstOrDefault(u => u.Mobile == mobile && u.Password == password.ComputeSHA256Hash());
 				if (loginUser == null)
-					return Results.Problem("Invalid Mobile Number or Password");
+					return Results.Problem("Invalid Mobile Number or Password", null, StatusCodes.Status406NotAcceptable);
 
 				string authenticationString = loginUser.Mobile + "~" + loginUser.Password + "~" + DateTime.Now.AddMinutes(loginKeyValidityInMinutes);
 				return Results.Ok(authenticationString.Encrypt());

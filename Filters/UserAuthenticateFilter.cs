@@ -16,10 +16,10 @@ namespace _2FA.Filters
             {
                 User user = UserService.UserFromToken(authHeader["Bearer ".Length..].Trim(), false);
                 if (user == null)
-                    result = new BadRequestResult();
+                    result = new UnauthorizedResult();
             }
             else
-				result = new UnauthorizedResult();
+				result = new BadRequestResult();
             if (!(context.ActionDescriptor.EndpointMetadata.OfType<IAllowAnonymous>().Any() || result == null))
 				context.Result = result;
 		}

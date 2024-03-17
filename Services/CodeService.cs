@@ -18,7 +18,7 @@ namespace _2FA.Services
 				!StoreCodeAfterExpiry || 
 				c.GenerationTime > DateTime.Now.AddMinutes(-codeLifetimeInMinutes));
 			if (sentCodeCount >= maxConcurrentCodes)
-				return Results.Problem("Maximum Codes Issued. Please try later");
+				return Results.Problem("Maximum Codes Issued. Please try later", null, StatusCodes.Status429TooManyRequests);
 			using (DatabaseContext _dbContext = new())
 			{
 				Code newCode = new()
@@ -40,7 +40,7 @@ namespace _2FA.Services
 				return Results.Unauthorized();
 			Code selectedCode = user.Codes.FirstOrDefault(c => c.CodeValue == code);
 			if (selectedCode == null)
-				return Results.Problem("Invalid or Expired Code");
+				return Results.Problem("Invalid or Expired Code", null, StatusCodes.Status406NotAcceptable);
 			selectedCode.UtilizationTime = DateTime.Now;
 			using (DatabaseContext _dbContext = new())
 			{

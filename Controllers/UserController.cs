@@ -14,7 +14,8 @@ namespace _2FA.Controllers
 		/// <param name="user">User Details: Mobile Number & Password</param>
 		/// <returns></returns>
 		[HttpPost("register")]
-		//[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status201Created)]
+		[ProducesResponseType(StatusCodes.Status406NotAcceptable)]
 		public IResult Register(string mobile, string password) => UserService.Register(mobile, password);
 		/// <summary>
 		/// Validate A Registered User
@@ -22,6 +23,8 @@ namespace _2FA.Controllers
 		/// <param name="user">User Details: Mobile Number & Password</param>
 		/// <returns></returns>
 		[HttpPost("login")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status406NotAcceptable)]
 		public IResult Login(string mobile, string password) => UserService.Login(mobile, password);
 	}
 }
